@@ -1,7 +1,8 @@
 
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -43,8 +44,31 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
+          {/* User menu and CTA */}
+          <div className="hidden md:flex items-center space-x-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <User className="h-4 w-4 mr-2" />
+                  Mon compte
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <a href="/dashboard" className="flex items-center w-full">
+                    <User className="h-4 w-4 mr-2" />
+                    Espace membre
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <a href="/admin" className="flex items-center w-full">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Administration
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <Button className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
               Adhérer
             </Button>
@@ -73,8 +97,14 @@ const Header = () => {
                   {item.name}
                 </a>
               ))}
-              <div className="pt-2">
-                <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
+              <div className="pt-4 space-y-2">
+                <a href="/dashboard" className="block py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Espace membre
+                </a>
+                <a href="/admin" className="block py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                  Administration
+                </a>
+                <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold mt-2">
                   Adhérer
                 </Button>
               </div>
