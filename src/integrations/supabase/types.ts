@@ -9,7 +9,141 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      actualites: {
+        Row: {
+          auteur_id: string | null
+          contenu: string
+          date_creation: string | null
+          date_modification: string | null
+          id: string
+          image_url: string | null
+          publie: boolean | null
+          tags: string[] | null
+          titre: string
+          urgent: boolean | null
+        }
+        Insert: {
+          auteur_id?: string | null
+          contenu: string
+          date_creation?: string | null
+          date_modification?: string | null
+          id?: string
+          image_url?: string | null
+          publie?: boolean | null
+          tags?: string[] | null
+          titre: string
+          urgent?: boolean | null
+        }
+        Update: {
+          auteur_id?: string | null
+          contenu?: string
+          date_creation?: string | null
+          date_modification?: string | null
+          id?: string
+          image_url?: string | null
+          publie?: boolean | null
+          tags?: string[] | null
+          titre?: string
+          urgent?: boolean | null
+        }
+        Relationships: []
+      }
+      adhesions: {
+        Row: {
+          date_creation: string | null
+          email: string
+          id: string
+          message: string | null
+          nom: string
+          poste: string | null
+          prenom: string
+          service: string | null
+          status: string | null
+          telephone: string | null
+        }
+        Insert: {
+          date_creation?: string | null
+          email: string
+          id?: string
+          message?: string | null
+          nom: string
+          poste?: string | null
+          prenom: string
+          service?: string | null
+          status?: string | null
+          telephone?: string | null
+        }
+        Update: {
+          date_creation?: string | null
+          email?: string
+          id?: string
+          message?: string | null
+          nom?: string
+          poste?: string | null
+          prenom?: string
+          service?: string | null
+          status?: string | null
+          telephone?: string | null
+        }
+        Relationships: []
+      }
+      contacts: {
+        Row: {
+          date_creation: string | null
+          email: string
+          id: string
+          message: string
+          nom: string
+          prenom: string
+          sujet: string
+          traite: boolean | null
+        }
+        Insert: {
+          date_creation?: string | null
+          email: string
+          id?: string
+          message: string
+          nom: string
+          prenom: string
+          sujet: string
+          traite?: boolean | null
+        }
+        Update: {
+          date_creation?: string | null
+          email?: string
+          id?: string
+          message?: string
+          nom?: string
+          prenom?: string
+          sujet?: string
+          traite?: boolean | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          date_creation: string | null
+          id: string
+          nom: string | null
+          prenom: string | null
+          role: string | null
+        }
+        Insert: {
+          date_creation?: string | null
+          id: string
+          nom?: string | null
+          prenom?: string | null
+          role?: string | null
+        }
+        Update: {
+          date_creation?: string | null
+          id?: string
+          nom?: string | null
+          prenom?: string | null
+          role?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,116 +1,175 @@
 
 import { useState } from "react";
-import { Menu, X, User, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Menu, User, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, profile, signOut, isAdmin } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   const menuItems = [
-    { name: "Accueil", href: "/" },
-    { name: "Services", href: "#services" },
-    { name: "Actualités", href: "#actualites" },
-    { name: "Droit du travail", href: "#droit-travail" },
-    { name: "Élections", href: "#elections" },
-    { name: "Contact", href: "#contact" },
+    { href: "/#accueil", label: "Accueil" },
+    { href: "/#services", label: "Services" },
+    { href: "/#actualites", label: "Actualités" },
+    { href: "/#droit-travail", label: "Droit du travail" },
+    { href: "/#elections", label: "Élections" },
+    { href: "/#contact", label: "Contact" },
+    { href: "/#adhesion", label: "Adhésion" },
   ];
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold">
+        <div className="flex items-center justify-between h-16">
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="bg-red-600 text-white p-2 rounded-lg font-bold text-xl">
               FO
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">FOCOM UES ILIAD</h1>
+            <div className="hidden sm:block">
+              <h1 className="font-bold text-lg text-gray-900">FOCOM UES ILIAD</h1>
               <p className="text-sm text-gray-600">Force Ouvrière</p>
             </div>
-          </div>
+          </Link>
 
           {/* Navigation desktop */}
-          <nav className="hidden md:flex space-x-6">
+          <nav className="hidden lg:flex items-center space-x-8">
             {menuItems.map((item) => (
               <a
-                key={item.name}
+                key={item.href}
                 href={item.href}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                className="text-gray-700 hover:text-red-600 transition-colors font-medium"
               >
-                {item.name}
+                {item.label}
               </a>
             ))}
           </nav>
 
-          {/* User menu and CTA */}
-          <div className="hidden md:flex items-center space-x-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <User className="h-4 w-4 mr-2" />
-                  Mon compte
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <a href="/dashboard" className="flex items-center w-full">
-                    <User className="h-4 w-4 mr-2" />
-                    Espace membre
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <a href="/admin" className="flex items-center w-full">
-                    <Settings className="h-4 w-4 mr-2" />
-                    Administration
-                  </a>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
-            <Button className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
-              Adhérer
-            </Button>
-          </div>
-
-          {/* Menu mobile toggle */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-
-        {/* Menu mobile */}
-        {isMenuOpen && (
-          <div className="md:hidden pb-4">
-            <nav className="space-y-2">
-              {menuItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="block py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
+          {/* Boutons utilisateur */}
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <div className="flex items-center space-x-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/dashboard')}
+                  className="hidden sm:flex"
                 >
-                  {item.name}
-                </a>
-              ))}
-              <div className="pt-4 space-y-2">
-                <a href="/dashboard" className="block py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                  Espace membre
-                </a>
-                <a href="/admin" className="block py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors">
-                  Administration
-                </a>
-                <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold mt-2">
-                  Adhérer
+                  <User className="h-4 w-4 mr-2" />
+                  Espace Membre
+                </Button>
+                {isAdmin && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate('/admin')}
+                    className="hidden sm:flex"
+                  >
+                    Admin
+                  </Button>
+                )}
+                <Button 
+                  variant="ghost" 
+                  onClick={handleSignOut}
+                  className="hidden sm:flex"
+                >
+                  <LogOut className="h-4 w-4" />
                 </Button>
               </div>
-            </nav>
+            ) : (
+              <Button 
+                onClick={() => navigate('/auth')}
+                className="hidden sm:flex"
+              >
+                Connexion
+              </Button>
+            )}
+
+            {/* Menu mobile */}
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild className="lg:hidden">
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                  <SheetDescription>
+                    Navigation FOCOM UES ILIAD
+                  </SheetDescription>
+                </SheetHeader>
+                <nav className="flex flex-col space-y-4 mt-8">
+                  {menuItems.map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className="text-gray-700 hover:text-red-600 transition-colors font-medium py-2"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                  
+                  {user ? (
+                    <>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          navigate('/dashboard');
+                          setIsOpen(false);
+                        }}
+                        className="justify-start"
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        Espace Membre
+                      </Button>
+                      {isAdmin && (
+                        <Button 
+                          variant="outline" 
+                          onClick={() => {
+                            navigate('/admin');
+                            setIsOpen(false);
+                          }}
+                          className="justify-start"
+                        >
+                          Admin
+                        </Button>
+                      )}
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => {
+                          handleSignOut();
+                          setIsOpen(false);
+                        }}
+                        className="justify-start"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Déconnexion
+                      </Button>
+                    </>
+                  ) : (
+                    <Button 
+                      onClick={() => {
+                        navigate('/auth');
+                        setIsOpen(false);
+                      }}
+                      className="justify-start"
+                    >
+                      Connexion
+                    </Button>
+                  )}
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
-        )}
+        </div>
       </div>
     </header>
   );
