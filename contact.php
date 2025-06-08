@@ -2,198 +2,203 @@
 <?php
 session_start();
 include_once 'config/database.php';
-include_once 'includes/header.php';
 
-$message_envoye = false;
-$erreur = '';
+$success = '';
+$error = '';
 
-if ($_POST) {
-    $nom = trim($_POST['nom'] ?? '');
-    $prenom = trim($_POST['prenom'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $sujet = trim($_POST['sujet'] ?? '');
-    $message = trim($_POST['message'] ?? '');
+if ($_POST && isset($_POST['send_message'])) {
+    $nom = htmlspecialchars($_POST['nom']);
+    $prenom = htmlspecialchars($_POST['prenom']);
+    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+    $telephone = htmlspecialchars($_POST['telephone']);
+    $sujet = htmlspecialchars($_POST['sujet']);
+    $message = htmlspecialchars($_POST['message']);
+    $type_demande = htmlspecialchars($_POST['type_demande']);
     
-    if ($nom && $prenom && $email && $sujet && $message) {
-        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            try {
-                $stmt = $pdo->prepare("INSERT INTO contacts (nom, prenom, email, sujet, message) VALUES (?, ?, ?, ?, ?)");
-                $stmt->execute([$nom, $prenom, $email, $sujet, $message]);
-                $message_envoye = true;
-            } catch (Exception $e) {
-                $erreur = "Erreur lors de l'envoi du message. Veuillez réessayer.";
+    if (!$email) {
+        $error = 'Adresse email invalide';
+    } elseif (empty($nom) || empty($prenom) || empty($sujet) || empty($message)) {
+        $error = 'Tous les champs obligatoires doivent être remplis';
+    } else {
+        // Enregistrer le message en base
+        $stmt = $pdo->prepare("INSERT INTO messages_contact (nom, prenom, email, telephone, sujet, message, type_demande, date_envoi) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+        
+        if ($stmt->execute([$nom, $prenom, $email, $telephone, $sujet, $message, $type_demande])) {
+            // Préparer l'email
+            $to = 'contact@focom-iliad.fr';
+            $subject = 'Nouveau message depuis le site FOCOM - ' . $sujet;
+            
+            $email_content = "
+Nouveau message reçu depuis le site FOCOM UES ILIAD
+
+Informations du contact :
+- Nom : $nom
+- Prénom : $prenom  
+- Email : $email
+- Téléphone : $telephone
+- Type de demande : $type_demande
+
+Sujet : $sujet
+
+Message :
+$message
+
+---
+Message envoyé depuis le formulaire de contact du site FOCOM UES ILIAD
+Date : " . date('d/m/Y à H:i');
+
+            $headers = "From: $email\r\n";
+            $headers .= "Reply-To: $email\r\n";
+            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+            
+            // Envoyer l'email
+            if (mail($to, $subject, $email_content, $headers)) {
+                $success = 'Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.';
+            } else {
+                $success = 'Votre message a été enregistré. Nous vous répondrons dans les plus brefs délais.';
             }
         } else {
-            $erreur = "Adresse email invalide.";
+            $error = 'Erreur lors de l\'envoi du message. Veuillez réessayer.';
         }
-    } else {
-        $erreur = "Veuillez remplir tous les champs.";
     }
 }
+
+include_once 'includes/header.php';
 ?>
 
-<main>
-    <!-- Hero Section -->
-    <section class="hero-section" style="padding: 3rem 0;">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title" style="font-size: 2.5rem;">Contactez-nous</h1>
-                <p class="hero-description">
-                    Une question, un problème, besoin de conseils ? Notre équipe est là pour vous accompagner.
-                </p>
-            </div>
-        </div>
-    </section>
+<div class="container" style="padding: 2rem 0;">
+    <div class="section-header">
+        <h1>Contactez-nous</h1>
+        <p>Une question, une demande d'information ou besoin d'aide ? N'hésitez pas à nous contacter.</p>
+    </div>
 
-    <!-- Informations de contact -->
-    <section class="stats-section">
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-icon">
-                        <span>📧</span>
-                    </div>
-                    <div class="stat-label">Email</div>
-                    <div class="stat-description">contact@focom-iliad.fr</div>
-                </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 3rem;">
+        <!-- Informations de contact -->
+        <div>
+            <h2 style="margin-bottom: 1.5rem; color: var(--gray-900);">Nos coordonnées</h2>
+            
+            <div style="background: var(--gray-50); padding: 2rem; border-radius: 1rem; margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">📍 Adresse</h3>
+                <p style="margin-bottom: 1rem;">FOCOM UES ILIAD<br>
+                Force Ouvrière<br>
+                75000 Paris, France</p>
                 
-                <div class="stat-item">
-                    <div class="stat-icon">
-                        <span>📞</span>
-                    </div>
-                    <div class="stat-label">Téléphone</div>
-                    <div class="stat-description">01 23 45 67 89</div>
-                </div>
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">📞 Téléphone</h3>
+                <p style="margin-bottom: 1rem;">01 23 45 67 89</p>
                 
-                <div class="stat-item">
-                    <div class="stat-icon">
-                        <span>📍</span>
-                    </div>
-                    <div class="stat-label">Adresse</div>
-                    <div class="stat-description">Paris, France</div>
-                </div>
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">📧 Email</h3>
+                <p style="margin-bottom: 1rem;">contact@focom-iliad.fr</p>
                 
-                <div class="stat-item">
-                    <div class="stat-icon">
-                        <span>⏰</span>
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">🕒 Horaires</h3>
+                <p>Lundi - Vendredi : 9h00 - 17h00</p>
+            </div>
+
+            <div style="background: var(--light-blue); padding: 2rem; border-radius: 1rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">💡 Le saviez-vous ?</h3>
+                <p>En tant que salarié d'ILIAD, vous bénéficiez de permanences syndicales régulières. Consultez votre espace membre pour connaître les prochaines dates.</p>
+            </div>
+        </div>
+
+        <!-- Formulaire de contact -->
+        <div class="contact-form">
+            <h3>Envoyez-nous un message</h3>
+            
+            <?php if ($success): ?>
+            <div style="background: #f0fdf4; color: #16a34a; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border: 1px solid #bbf7d0;">
+                <?= $success ?>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($error): ?>
+            <div style="background: #fef2f2; color: #dc2626; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border: 1px solid #fecaca;">
+                <?= $error ?>
+            </div>
+            <?php endif; ?>
+
+            <form method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prenom">Prénom *</label>
+                        <input type="text" id="prenom" name="prenom" required value="<?= isset($_POST['prenom']) ? htmlspecialchars($_POST['prenom']) : '' ?>">
                     </div>
-                    <div class="stat-label">Permanences</div>
-                    <div class="stat-description">Lun-Ven 9h-17h</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Formulaire de contact -->
-    <section class="services-section">
-        <div class="container">
-            <div style="max-width: 800px; margin: 0 auto;">
-                <?php if ($message_envoye): ?>
-                <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; text-align: center;">
-                    <h3>✅ Message envoyé avec succès !</h3>
-                    <p>Nous vous répondrons dans les plus brefs délais.</p>
-                </div>
-                <?php endif; ?>
-
-                <?php if ($erreur): ?>
-                <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; text-align: center;">
-                    <p><strong>Erreur :</strong> <?= htmlspecialchars($erreur) ?></p>
-                </div>
-                <?php endif; ?>
-
-                <div class="service-card">
-                    <h2 style="text-align: center; margin-bottom: 2rem;">Envoyez-nous un message</h2>
-                    
-                    <form method="POST" style="text-align: left;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                            <div>
-                                <label for="nom" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Nom *</label>
-                                <input type="text" id="nom" name="nom" required 
-                                       style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem;"
-                                       value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>">
-                            </div>
-                            <div>
-                                <label for="prenom" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Prénom *</label>
-                                <input type="text" id="prenom" name="prenom" required 
-                                       style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem;"
-                                       value="<?= htmlspecialchars($_POST['prenom'] ?? '') ?>">
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom: 1rem;">
-                            <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email *</label>
-                            <input type="email" id="email" name="email" required 
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem;"
-                                   value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
-                        </div>
-
-                        <div style="margin-bottom: 1rem;">
-                            <label for="sujet" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Sujet *</label>
-                            <select id="sujet" name="sujet" required 
-                                    style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem;">
-                                <option value="">Choisissez un sujet...</option>
-                                <option value="Question juridique" <?= ($_POST['sujet'] ?? '') === 'Question juridique' ? 'selected' : '' ?>>Question juridique</option>
-                                <option value="Problème au travail" <?= ($_POST['sujet'] ?? '') === 'Problème au travail' ? 'selected' : '' ?>>Problème au travail</option>
-                                <option value="Adhésion" <?= ($_POST['sujet'] ?? '') === 'Adhésion' ? 'selected' : '' ?>>Adhésion</option>
-                                <option value="Information générale" <?= ($_POST['sujet'] ?? '') === 'Information générale' ? 'selected' : '' ?>>Information générale</option>
-                                <option value="Autre" <?= ($_POST['sujet'] ?? '') === 'Autre' ? 'selected' : '' ?>>Autre</option>
-                            </select>
-                        </div>
-
-                        <div style="margin-bottom: 2rem;">
-                            <label for="message" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Message *</label>
-                            <textarea id="message" name="message" required rows="6"
-                                      style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem; resize: vertical;"
-                                      placeholder="Décrivez votre situation ou votre question..."><?= htmlspecialchars($_POST['message'] ?? '') ?></textarea>
-                        </div>
-
-                        <div style="text-align: center;">
-                            <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem;">
-                                Envoyer le message
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Autres moyens de contact -->
-    <section class="news-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Autres moyens de nous joindre</h2>
-            </div>
-
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">🏢</div>
-                    <h3>Permanences sur site</h3>
-                    <p>Nos délégués syndicaux tiennent des permanences régulières sur les différents sites d'ILIAD.</p>
-                    <p><strong>Horaires :</strong> Consultez l'affichage syndical ou contactez-nous pour connaître les créneaux.</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">📱</div>
-                    <h3>Réseaux sociaux</h3>
-                    <p>Suivez-nous sur nos réseaux sociaux pour ne rien manquer de l'actualité syndicale.</p>
-                    <div style="margin-top: 1rem;">
-                        <a href="#" style="margin-right: 1rem;">📘 Facebook</a>
-                        <a href="#" style="margin-right: 1rem;">🐦 Twitter</a>
-                        <a href="#">💼 LinkedIn</a>
+                    <div class="form-group">
+                        <label for="nom">Nom *</label>
+                        <input type="text" id="nom" name="nom" required value="<?= isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : '' ?>">
                     </div>
                 </div>
 
-                <div class="service-card">
-                    <div class="service-icon">🚨</div>
-                    <h3>Urgences</h3>
-                    <p>En cas de situation urgente (accident du travail, harcèlement, licenciement abusif), contactez-nous immédiatement.</p>
-                    <p><strong>Ligne urgence :</strong> 01 23 45 67 89<br>
-                    <strong>Email prioritaire :</strong> urgence@focom-iliad.fr</p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="telephone">Téléphone</label>
+                        <input type="tel" id="telephone" name="telephone" value="<?= isset($_POST['telephone']) ? htmlspecialchars($_POST['telephone']) : '' ?>">
+                    </div>
                 </div>
+
+                <div class="form-group">
+                    <label for="type_demande">Type de demande</label>
+                    <select id="type_demande" name="type_demande">
+                        <option value="information" <?= (isset($_POST['type_demande']) && $_POST['type_demande'] === 'information') ? 'selected' : '' ?>>Demande d'information</option>
+                        <option value="adhesion" <?= (isset($_POST['type_demande']) && $_POST['type_demande'] === 'adhesion') ? 'selected' : '' ?>>Adhésion au syndicat</option>
+                        <option value="conseil" <?= (isset($_POST['type_demande']) && $_POST['type_demande'] === 'conseil') ? 'selected' : '' ?>>Conseil juridique</option>
+                        <option value="reclamation" <?= (isset($_POST['type_demande']) && $_POST['type_demande'] === 'reclamation') ? 'selected' : '' ?>>Réclamation</option>
+                        <option value="autre" <?= (isset($_POST['type_demande']) && $_POST['type_demande'] === 'autre') ? 'selected' : '' ?>>Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sujet">Sujet *</label>
+                    <input type="text" id="sujet" name="sujet" required value="<?= isset($_POST['sujet']) ? htmlspecialchars($_POST['sujet']) : '' ?>">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" required placeholder="Décrivez votre demande..."><?= isset($_POST['message']) ? htmlspecialchars($_POST['message']) : '' ?></textarea>
+                </div>
+
+                <button type="submit" name="send_message" class="btn btn-primary" style="width: 100%;">
+                    📤 Envoyer le message
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Section FAQ rapide -->
+    <div style="background: var(--gray-50); padding: 3rem; border-radius: 1rem;">
+        <h2 style="text-align: center; margin-bottom: 2rem;">Questions fréquentes</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <div style="background: var(--white); padding: 1.5rem; border-radius: 0.5rem;">
+                <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Comment adhérer au syndicat ?</h4>
+                <p style="color: var(--gray-600);">Rendez-vous sur notre page <a href="adhesion.php" style="color: var(--primary-blue);">adhésion</a> pour remplir le formulaire en ligne.</p>
+            </div>
+            
+            <div style="background: var(--white); padding: 1.5rem; border-radius: 0.5rem;">
+                <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">J'ai un problème au travail, que faire ?</h4>
+                <p style="color: var(--gray-600);">Contactez-nous immédiatement. Nous proposons un accompagnement juridique pour tous les salariés.</p>
+            </div>
+            
+            <div style="background: var(--white); padding: 1.5rem; border-radius: 0.5rem;">
+                <h4 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Les permanences syndicales</h4>
+                <p style="color: var(--gray-600);">Des permanences ont lieu régulièrement. Consultez votre espace membre pour les dates.</p>
             </div>
         </div>
-    </section>
-</main>
+    </div>
+</div>
+
+<style>
+@media (max-width: 768px) {
+    div[style*="grid-template-columns: 1fr 1fr"] {
+        display: block !important;
+    }
+    
+    div[style*="grid-template-columns: 1fr 1fr"] > div:first-child {
+        margin-bottom: 2rem;
+    }
+}
+</style>
 
 <?php include_once 'includes/footer.php'; ?>

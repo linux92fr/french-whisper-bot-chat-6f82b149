@@ -29,6 +29,7 @@
                     <a href="droit-travail.php" class="nav-link">Droit du travail</a>
                     <a href="elections.php" class="nav-link">Élections</a>
                     <a href="contact.php" class="nav-link">Contact</a>
+                    <a href="https://webmail.focom-iliad.fr" target="_blank" class="nav-link">📧 Webmail</a>
                 </nav>
 
                 <!-- User menu and CTA -->
@@ -84,6 +85,7 @@
                 <a href="droit-travail.php">Droit du travail</a>
                 <a href="elections.php">Élections</a>
                 <a href="contact.php">Contact</a>
+                <a href="https://webmail.focom-iliad.fr" target="_blank">📧 Webmail</a>
                 <div class="mobile-actions">
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <a href="mon-compte.php">Mon compte</a>
@@ -100,9 +102,33 @@
         </div>
     </header>
 
+    <!-- Bouton retour en haut -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+    </button>
+
     <script>
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             menu.classList.toggle('active');
+        }
+
+        // Gestion du bouton retour en haut
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
     </script>
