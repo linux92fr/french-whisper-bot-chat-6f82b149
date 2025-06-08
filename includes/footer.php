@@ -33,21 +33,28 @@
                     </div>
                 </div>
 
-                <!-- Réseaux sociaux -->
+                <!-- Liens légaux -->
                 <div class="footer-section">
-                    <h3>Suivez-nous</h3>
-                    <div class="social-links">
+                    <h3>Informations légales</h3>
+                    <ul>
+                        <li><a href="confidentialite.php">Politique de confidentialité</a></li>
+                        <li><a href="rgpd.php">RGPD</a></li>
+                        <li><a href="mentions-legales.php">Mentions légales</a></li>
+                    </ul>
+                    <div class="social-links" style="margin-top: 1rem;">
                         <a href="#" class="social-link facebook">Facebook</a>
                         <a href="#" class="social-link twitter">Twitter</a>
                         <a href="#" class="social-link linkedin">LinkedIn</a>
                     </div>
-                    <p>Restez informé de nos actions et actualités syndicales.</p>
                 </div>
             </div>
 
             <!-- Copyright -->
             <div class="footer-bottom">
                 <p>&copy; 2024 FOCOM UES ILIAD - Force Ouvrière. Tous droits réservés.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--gray-600);">
+                    FOCOM UES ILIAD est affilié à la Fédération Force Ouvrière Communication
+                </p>
             </div>
         </div>
     </footer>

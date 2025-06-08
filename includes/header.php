@@ -62,7 +62,6 @@
                             </button>
                             <div class="dropdown-menu">
                                 <a href="login.php">🔑 Connexion</a>
-                                <a href="login.php">📝 Inscription</a>
                             </div>
                         </div>
                     <?php endif; ?>
@@ -109,26 +108,34 @@
         </svg>
     </button>
 
+    <!-- Bannière cookies -->
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-banner-content">
+            <p>🍪 Nous utilisons des cookies pour améliorer votre expérience. En continuant, vous acceptez notre <a href="confidentialite.php" style="color: var(--yellow);">politique de confidentialité</a>.</p>
+            <div class="cookie-banner-buttons">
+                <button onclick="acceptCookies()" class="btn btn-cta" style="padding: 0.5rem 1rem;">Accepter</button>
+                <a href="rgpd.php" style="color: var(--gray-300); margin-left: 1rem;">En savoir plus</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup Newsletter -->
+    <div class="newsletter-popup" id="newsletterPopup">
+        <div class="newsletter-popup-content">
+            <button class="newsletter-close" onclick="hideNewsletterPopup()">&times;</button>
+            <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">📧 Restez informé !</h3>
+            <p style="margin-bottom: 1rem;">Inscrivez-vous à notre newsletter pour recevoir nos actualités syndicales et défendre vos droits.</p>
+            <form class="newsletter-form" onsubmit="submitNewsletter(event)">
+                <input type="email" id="newsletterEmail" placeholder="Votre adresse email" required>
+                <button type="submit" class="btn btn-primary">S'inscrire</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/site.js"></script>
     <script>
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
             menu.classList.toggle('active');
-        }
-
-        // Gestion du bouton retour en haut
-        window.addEventListener('scroll', function() {
-            const backToTop = document.getElementById('backToTop');
-            if (window.pageYOffset > 300) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
-            }
-        });
-
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
         }
     </script>
