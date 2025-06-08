@@ -85,6 +85,10 @@ include_once 'includes/header.php';
                     
                     <button type="submit" name="login" class="btn btn-primary">Se connecter</button>
                 </form>
+                
+                <div style="text-align: center; margin-top: 1rem;">
+                    <a href="reset-password.php" style="color: var(--primary); text-decoration: none;">Mot de passe oublié ?</a>
+                </div>
             </div>
 
             <!-- Formulaire d'inscription -->
