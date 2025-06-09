@@ -1,0 +1,34 @@
+
+/* Reset et variables */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-blue: #1e40af;
+    --secondary-blue: #3b82f6;
+    --light-blue: #dbeafe;
+    --yellow: #eab308;
+    --yellow-hover: #ca8a04;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-900: #111827;
+    --white: #ffffff;
+    --black: #000000;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--gray-900);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
