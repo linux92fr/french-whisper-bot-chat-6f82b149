@@ -101,9 +101,13 @@
         </div>
     </header>
 
-    <!-- Bouton retour en haut -->
-    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Bouton retour en haut avec progression -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="Retour en haut">
+        <svg class="back-to-top__progress-svg" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path class="background" d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"/>
+            <path class="tracker" d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"/>
+        </svg>
+        <svg class="back-to-top__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
         </svg>
     </button>

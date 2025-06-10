@@ -51,13 +51,26 @@ function hideNewsletterPopup() {
 
 function setupBackToTop() {
     const backToTop = document.getElementById('backToTop');
+    const progressTracker = document.querySelector('.back-to-top__progress-svg .tracker');
     
     if (backToTop) {
         window.addEventListener('scroll', function() {
-            if (window.pageYOffset > 300) {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercentage = (scrollTop / scrollHeight) * 100;
+            
+            // Afficher le bouton après 300px de scroll
+            if (scrollTop > 300) {
                 backToTop.classList.add('visible');
             } else {
                 backToTop.classList.remove('visible');
+            }
+            
+            // Mettre à jour la barre de progression circulaire
+            if (progressTracker) {
+                const circumference = 314; // 2 * π * r (r = 50)
+                const offset = circumference - (scrollPercentage / 100) * circumference;
+                progressTracker.style.strokeDashoffset = offset;
             }
         });
     }
