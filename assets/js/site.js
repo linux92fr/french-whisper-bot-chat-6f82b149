@@ -39,6 +39,20 @@ function showNewsletterPopup() {
     if (popup) {
         popup.classList.add('show');
         localStorage.setItem('newsletterSeen', 'true');
+        
+        // Ajouter l'événement pour fermer en cliquant à l'extérieur
+        popup.addEventListener('click', function(e) {
+            if (e.target === popup) {
+                hideNewsletterPopup();
+            }
+        });
+        
+        // Fermer avec la touche Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && popup.classList.contains('show')) {
+                hideNewsletterPopup();
+            }
+        });
     }
 }
 
@@ -49,45 +63,24 @@ function hideNewsletterPopup() {
     }
 }
 
-function setupBackToTop() {
-    const backToTop = document.getElementById('backToTop');
-    const progressTracker = document.querySelector('.back-to-top__progress-svg .tracker');
-    
-    if (backToTop) {
-        window.addEventListener('scroll', function() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrollPercentage = (scrollTop / scrollHeight) * 100;
-            
-            // Afficher le bouton après 300px de scroll
-            if (scrollTop > 300) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
-            }
-            
-            // Mettre à jour la barre de progression circulaire
-            if (progressTracker) {
-                const circumference = 314; // 2 * π * r (r = 50)
-                const offset = circumference - (scrollPercentage / 100) * circumference;
-                progressTracker.style.strokeDashoffset = offset;
-            }
-        });
-    }
-}
-
-function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
-
-// Soumission newsletter
+// Fonction améliorée pour la soumission newsletter
 function submitNewsletter(event) {
     event.preventDefault();
     
     const email = document.getElementById('newsletterEmail').value;
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const messageContainer = document.getElementById('newsletterMessage');
+    
+    // Validation côté client
+    if (!email || !email.includes('@')) {
+        showNewsletterMessage('Veuillez entrer une adresse email valide.', 'error');
+        return;
+    }
+    
+    // État de chargement
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span style="opacity: 0.7;">⏳ Inscription...</span>';
+    
     const formData = new FormData();
     formData.append('email', email);
     formData.append('subscribe_newsletter', '1');
@@ -99,14 +92,45 @@ function submitNewsletter(event) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Inscription à la newsletter réussie !');
-            hideNewsletterPopup();
+            showNewsletterMessage('🎉 Inscription réussie ! Merci de rejoindre notre communauté.', 'success');
+            document.getElementById('newsletterEmail').value = '';
+            
+            // Fermer automatiquement après 2 secondes
+            setTimeout(() => {
+                hideNewsletterPopup();
+            }, 2000);
         } else {
-            alert('Erreur : ' + data.message);
+            showNewsletterMessage('❌ ' + data.message, 'error');
         }
     })
     .catch(error => {
         console.error('Erreur:', error);
-        alert('Erreur lors de l\'inscription');
+        showNewsletterMessage('❌ Erreur lors de l\'inscription. Veuillez réessayer.', 'error');
+    })
+    .finally(() => {
+        // Restaurer le bouton
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '📧 S\'inscrire maintenant';
     });
+}
+
+function showNewsletterMessage(message, type) {
+    const messageContainer = document.getElementById('newsletterMessage');
+    if (messageContainer) {
+        messageContainer.className = `newsletter-message ${type}`;
+        messageContainer.textContent = message;
+        messageContainer.style.display = 'block';
+        
+        // Masquer le message après 5 secondes pour les erreurs
+        if (type === 'error') {
+            setTimeout(() => {
+                messageContainer.style.display = 'none';
+            }, 5000);
+        }
+    }
+}
+
+// Fonction pour afficher manuellement la popup (pour tests ou boutons)
+function openNewsletterPopup() {
+    showNewsletterPopup();
 }

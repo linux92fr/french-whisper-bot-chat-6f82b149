@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -123,16 +122,41 @@
         </div>
     </div>
 
-    <!-- Popup Newsletter -->
+    <!-- Popup Newsletter moderne -->
     <div class="newsletter-popup" id="newsletterPopup">
         <div class="newsletter-popup-content">
-            <button class="newsletter-close" onclick="hideNewsletterPopup()">&times;</button>
-            <h3 style="color: var(--primary-blue); margin-bottom: 1rem;">📧 Restez informé !</h3>
-            <p style="margin-bottom: 1rem;">Inscrivez-vous à notre newsletter pour recevoir nos actualités syndicales et défendre vos droits.</p>
+            <button class="newsletter-close" onclick="hideNewsletterPopup()" aria-label="Fermer">&times;</button>
+            
+            <div class="newsletter-header">
+                <div class="newsletter-icon">📬</div>
+                <h3>Restez informé avec FOCOM !</h3>
+                <p>Recevez nos dernières actualités syndicales, conseils juridiques et informations importantes directement dans votre boîte mail.</p>
+            </div>
+
+            <div id="newsletterMessage" class="newsletter-message" style="display: none;"></div>
+
             <form class="newsletter-form" onsubmit="submitNewsletter(event)">
-                <input type="email" id="newsletterEmail" placeholder="Votre adresse email" required>
-                <button type="submit" class="btn btn-primary">S'inscrire</button>
+                <div class="form-group">
+                    <input 
+                        type="email" 
+                        id="newsletterEmail" 
+                        placeholder="Votre adresse email professionnelle"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+                <button type="submit" class="btn-submit">📧 S'inscrire maintenant</button>
             </form>
+
+            <div class="newsletter-features">
+                <h4>Ce que vous recevrez :</h4>
+                <div class="newsletter-benefits">
+                    <span class="newsletter-benefit">Actualités syndicales</span>
+                    <span class="newsletter-benefit">Conseils juridiques</span>
+                    <span class="newsletter-benefit">Alertes importantes</span>
+                    <span class="newsletter-benefit">Événements FO</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -143,3 +167,5 @@
             menu.classList.toggle('active');
         }
     </script>
+</body>
+</html>
