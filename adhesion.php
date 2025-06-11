@@ -3,35 +3,6 @@
 session_start();
 include_once 'config/database.php';
 include_once 'includes/header.php';
-
-$demande_envoyee = false;
-$erreur = '';
-
-if ($_POST) {
-    $nom = trim($_POST['nom'] ?? '');
-    $prenom = trim($_POST['prenom'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $telephone = trim($_POST['telephone'] ?? '');
-    $poste = trim($_POST['poste'] ?? '');
-    $service = trim($_POST['service'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-    
-    if ($nom && $prenom && $email && $poste && $service) {
-        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            try {
-                $stmt = $pdo->prepare("INSERT INTO adhesions (nom, prenom, email, telephone, poste, service, message) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$nom, $prenom, $email, $telephone, $poste, $service, $message]);
-                $demande_envoyee = true;
-            } catch (Exception $e) {
-                $erreur = "Erreur lors de l'envoi de la demande. Veuillez réessayer.";
-            }
-        } else {
-            $erreur = "Adresse email invalide.";
-        }
-    } else {
-        $erreur = "Veuillez remplir tous les champs obligatoires.";
-    }
-}
 ?>
 
 <main>
@@ -117,107 +88,100 @@ if ($_POST) {
         </div>
     </section>
 
-    <!-- Formulaire d'adhésion -->
+    <!-- Section téléchargement bulletin d'adhésion -->
     <section class="services-section">
         <div class="container">
             <div style="max-width: 800px; margin: 0 auto;">
-                <?php if ($demande_envoyee): ?>
-                <div style="background: #d4edda; color: #155724; padding: 2rem; border-radius: 0.5rem; margin-bottom: 2rem; text-align: center;">
-                    <h3>✅ Demande d'adhésion envoyée !</h3>
-                    <p>Nous allons traiter votre demande rapidement et vous recontacter pour finaliser votre adhésion.</p>
-                    <p><strong>Prochaines étapes :</strong></p>
-                    <ul style="text-align: left; max-width: 400px; margin: 1rem auto;">
-                        <li>• Validation de votre dossier (24-48h)</li>
-                        <li>• Envoi du bulletin d'adhésion</li>
-                        <li>• Activation de vos droits syndicaux</li>
-                        <li>• Invitation aux prochaines réunions</li>
-                    </ul>
-                </div>
-                <?php endif; ?>
-
-                <?php if ($erreur): ?>
-                <div style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; text-align: center;">
-                    <p><strong>Erreur :</strong> <?= htmlspecialchars($erreur) ?></p>
-                </div>
-                <?php endif; ?>
-
                 <div class="service-card">
-                    <h2 style="text-align: center; margin-bottom: 2rem;">Formulaire d'adhésion</h2>
-                    
-                    <form method="POST" style="text-align: left;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                            <div>
-                                <label for="nom" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Nom *</label>
-                                <input type="text" id="nom" name="nom" required 
-                                       style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem;"
-                                       value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>">
+                    <div style="text-align: center; margin-bottom: 3rem;">
+                        <div style="background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); width: 5rem; height: 5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 2rem;">📄</div>
+                        <h2 style="color: var(--primary-blue); margin-bottom: 1rem;">Téléchargez votre bulletin d'adhésion</h2>
+                        <p style="color: var(--gray-600); font-size: 1.1rem; line-height: 1.6;">
+                            Téléchargez le bulletin d'adhésion officiel, remplissez-le et retournez-le nous par email ou courrier.
+                        </p>
+                    </div>
+
+                    <!-- Étapes d'adhésion -->
+                    <div style="background: var(--light-blue); padding: 2rem; border-radius: 1rem; margin-bottom: 3rem;">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1.5rem; text-align: center;">📋 Comment adhérer ?</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div style="text-align: center;">
+                                <div style="background: var(--white); width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; color: var(--primary-blue);">1</div>
+                                <h4>Téléchargez</h4>
+                                <p style="font-size: 0.9rem; color: var(--gray-600);">Le bulletin d'adhésion au format PDF</p>
                             </div>
-                            <div>
-                                <label for="prenom" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Prénom *</label>
-                                <input type="text" id="prenom" name="prenom" required 
-                                       style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem;"
-                                       value="<?= htmlspecialchars($_POST['prenom'] ?? '') ?>">
+                            <div style="text-align: center;">
+                                <div style="background: var(--white); width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; color: var(--primary-blue);">2</div>
+                                <h4>Remplissez</h4>
+                                <p style="font-size: 0.9rem; color: var(--gray-600);">Vos informations personnelles et professionnelles</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="background: var(--white); width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: bold; color: var(--primary-blue);">3</div>
+                                <h4>Retournez</h4>
+                                <p style="font-size: 0.9rem; color: var(--gray-600);">Par email à contact@focom-iliad.fr</p>
                             </div>
                         </div>
+                    </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                            <div>
-                                <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email professionnel *</label>
-                                <input type="email" id="email" name="email" required 
-                                       style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem;"
-                                       value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
-                            </div>
-                            <div>
-                                <label for="telephone" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Téléphone</label>
-                                <input type="tel" id="telephone" name="telephone" 
-                                       style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem;"
-                                       value="<?= htmlspecialchars($_POST['telephone'] ?? '') ?>">
-                            </div>
-                        </div>
+                    <!-- Bouton de téléchargement -->
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <a href="documents/bulletin-adhesion-focom.pdf" 
+                           download="bulletin-adhesion-focom.pdf"
+                           class="btn btn-primary" 
+                           style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1.25rem 2rem; font-size: 1.1rem; text-decoration: none; border-radius: 0.75rem; background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); color: var(--white); font-weight: 600; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: all 0.3s ease;">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Télécharger le bulletin d'adhésion (PDF)
+                        </a>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-500);">
+                            Format PDF • Environ 150 Ko
+                        </p>
+                    </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <!-- Informations de contact -->
+                    <div style="background: var(--gray-50); padding: 2rem; border-radius: 1rem; border-left: 4px solid var(--primary-blue);">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 1.5rem;">📞 Besoin d'aide ?</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
                             <div>
-                                <label for="poste" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Poste occupé *</label>
-                                <input type="text" id="poste" name="poste" required 
-                                       style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem;"
-                                       placeholder="Ex: Technicien réseau, Conseiller client..."
-                                       value="<?= htmlspecialchars($_POST['poste'] ?? '') ?>">
+                                <h4 style="margin-bottom: 0.5rem;">📧 Par email</h4>
+                                <p style="color: var(--gray-600); margin: 0;">
+                                    <a href="mailto:contact@focom-iliad.fr" style="color: var(--primary-blue);">contact@focom-iliad.fr</a><br>
+                                    <small>Réponse sous 24h ouvrées</small>
+                                </p>
                             </div>
                             <div>
-                                <label for="service" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Service/Département *</label>
-                                <select id="service" name="service" required 
-                                        style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem;">
-                                    <option value="">Choisissez votre service...</option>
-                                    <option value="Technique" <?= ($_POST['service'] ?? '') === 'Technique' ? 'selected' : '' ?>>Technique</option>
-                                    <option value="Commercial" <?= ($_POST['service'] ?? '') === 'Commercial' ? 'selected' : '' ?>>Commercial</option>
-                                    <option value="Support client" <?= ($_POST['service'] ?? '') === 'Support client' ? 'selected' : '' ?>>Support client</option>
-                                    <option value="Marketing" <?= ($_POST['service'] ?? '') === 'Marketing' ? 'selected' : '' ?>>Marketing</option>
-                                    <option value="Administratif" <?= ($_POST['service'] ?? '') === 'Administratif' ? 'selected' : '' ?>>Administratif</option>
-                                    <option value="RH" <?= ($_POST['service'] ?? '') === 'RH' ? 'selected' : '' ?>>Ressources Humaines</option>
-                                    <option value="Autre" <?= ($_POST['service'] ?? '') === 'Autre' ? 'selected' : '' ?>>Autre</option>
-                                </select>
+                                <h4 style="margin-bottom: 0.5rem;">📞 Par téléphone</h4>
+                                <p style="color: var(--gray-600); margin: 0;">
+                                    <a href="tel:0123456789" style="color: var(--primary-blue);">01 23 45 67 89</a><br>
+                                    <small>Lun-Ven 9h-17h</small>
+                                </p>
                             </div>
                         </div>
-
-                        <div style="margin-bottom: 2rem;">
-                            <label for="message" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Message (optionnel)</label>
-                            <textarea id="message" name="message" rows="4"
-                                      style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-100); border-radius: 0.5rem; font-size: 1rem; resize: vertical;"
-                                      placeholder="Dites-nous pourquoi vous souhaitez adhérer, vos attentes..."><?= htmlspecialchars($_POST['message'] ?? '') ?></textarea>
-                        </div>
-
-                        <div style="background: var(--light-blue); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 2rem;">
-                            <p style="margin: 0; font-size: 0.9rem;">
-                                <strong>📋 Engagement :</strong> En soumettant ce formulaire, je demande à adhérer au syndicat Force Ouvrière FOCOM UES ILIAD et accepte de payer la cotisation syndicale selon le barème en vigueur.
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--gray-600);">
+                                <strong>💡 Conseil :</strong> Si vous avez des questions sur la cotisation ou vos droits, 
+                                n'hésitez pas à nous contacter avant de remplir le bulletin !
                             </p>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                        <div style="text-align: center;">
-                            <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
-                                Envoyer ma demande d'adhésion
-                            </button>
-                        </div>
-                    </form>
+    <!-- Section alternative en ligne -->
+    <section class="stats-section" style="background: var(--gray-50);">
+        <div class="container">
+            <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+                <h2 style="margin-bottom: 1.5rem; color: var(--primary-blue);">Adhésion en ligne bientôt disponible</h2>
+                <p style="color: var(--gray-600); margin-bottom: 2rem; line-height: 1.6;">
+                    Nous travaillons actuellement sur une solution d'adhésion 100% en ligne pour vous simplifier les démarches. 
+                    En attendant, le bulletin PDF reste le moyen le plus rapide pour nous rejoindre !
+                </p>
+                <div style="display: inline-flex; align-items: center; background: var(--white); padding: 1rem 1.5rem; border-radius: 0.75rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <span style="margin-right: 0.75rem; font-size: 1.5rem;">🚀</span>
+                    <span style="color: var(--gray-700); font-weight: 500;">Lancement prévu début 2025</span>
                 </div>
             </div>
         </div>

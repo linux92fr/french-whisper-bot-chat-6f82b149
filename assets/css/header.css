@@ -116,4 +116,20 @@
     align-items: center;
     justify-content: center;
     width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.mobile-actions .btn-cta {
+    background: var(--primary-blue);
+    color: var(--white);
+    border: 2px solid var(--primary-blue);
+}
+
+.mobile-actions .btn-cta:hover {
+    background: var(--secondary-blue);
+    border-color: var(--secondary-blue);
 }
