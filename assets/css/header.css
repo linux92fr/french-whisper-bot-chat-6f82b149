@@ -109,3 +109,11 @@
     flex-direction: column;
     gap: 0.5rem;
 }
+
+.mobile-actions .btn {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
